@@ -1,26 +1,390 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* =========================================================
+   HMP PGSD — GLOBAL DESIGN SYSTEM
+   Modern Editorial × Digital Archive × Organizational Storytelling
+   ========================================================= */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand Colors */
+  --color-primary-blue: #12658c;
+  --color-deep-navy: #092e47;
+  --color-royal-blue: #087eb5;
+  --color-sky-accent: #36bfe7;
+  --color-soft-blue: #eaf7fc;
+
+  /* Neutral Colors */
+  --color-off-white: #f8fafc;
+  --color-pure-white: #ffffff;
+  --color-ink: #101820;
+  --color-slate: #667681;
+
+  /* Typography */
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-plus-jakarta);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================================================
+   ROOT TOKENS
+   ========================================================= */
+
+:root {
+  --background: #f8fafc;
+  --foreground: #101820;
+
+  --primary-blue: #12658c;
+  --deep-navy: #092e47;
+  --royal-blue: #087eb5;
+  --sky-accent: #36bfe7;
+  --soft-blue: #eaf7fc;
+
+  --off-white: #f8fafc;
+  --pure-white: #ffffff;
+  --ink: #101820;
+  --slate: #667681;
+
+  /* Layout */
+  --container-max: 1280px;
+
+  --section-space: clamp(5rem, 9vw, 9rem);
+  --section-space-small: clamp(3.5rem, 6vw, 6rem);
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+
+  /* Shadow */
+  --shadow-soft: 0 1px 2px rgb(9 46 71 / 0.03), 0 8px 30px rgb(9 46 71 / 0.07);
+
+  /* Motion */
+  --transition-fast: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-slow: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  scroll-padding-top: 90px;
+  background: var(--background);
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: clip;
+
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  text-rendering: optimizeLegibility;
+}
+
+main {
+  display: block;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: 0;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Hero / Editorial Display */
+
+.display-title {
+  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
+
+  font-size: clamp(3rem, 7vw, 5.25rem);
+  font-weight: 700;
+
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+/* Main Section Heading */
+
+.section-title {
+  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
+
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 650;
+
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+/* Smaller Editorial Heading */
+
+.card-title {
+  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
+
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 650;
+
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+/* Larger Body */
+
+.body-large {
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.75;
+  color: var(--slate);
+}
+
+/* Small Editorial Label */
+
+.eyebrow {
+  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  line-height: 1;
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+  color: var(--primary-blue);
+}
+
+/* =========================================================
+   LAYOUT SYSTEM
+   ========================================================= */
+
+.site-container {
+  width: min(calc(100% - 2rem), var(--container-max));
+  margin-inline: auto;
+}
+
+.section-space {
+  padding-block: var(--section-space);
+}
+
+.section-space-small {
+  padding-block: var(--section-space-small);
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--primary-blue);
+  color: var(--pure-white);
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+  outline: 3px solid var(--sky-accent);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--off-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b6c9d3;
+  border: 3px solid var(--off-white);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-blue);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .site-container {
+    width: min(calc(100% - 4rem), var(--container-max));
+  }
+}
+
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  :root {
+    --container-max: 1320px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+
+  background-size: 72px 72px;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    rgba(0, 0, 0, 0.7) 65%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    rgba(0, 0, 0, 0.7) 65%,
+    transparent 100%
+  );
+}
+
+/* =========================================================
+   PREMIUM SCROLL EXPERIENCE
+   ========================================================= */
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  overscroll-behavior-x: none;
+}
+
+/* Text/image rendering tetap stabil saat scroll */
+section {
+  backface-visibility: hidden;
+}
+
+/* Anchor target tidak tertutup navbar */
+section[id] {
+  scroll-margin-top: 90px;
+}
+
+/* Scrollable horizontal sections tetap natural */
+[data-horizontal-scroll] {
+  overscroll-behavior-inline: contain;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
