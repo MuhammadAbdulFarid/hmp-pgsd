@@ -1,5 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
+
 import { ArrowUpRight, AtSign, Play, Music2 } from "lucide-react";
+
 import Container from "@/components/ui/Container";
 
 const navigation = [
@@ -50,12 +53,16 @@ const socialMedia = [
     href: null,
   },
 ];
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="relative overflow-hidden bg-deep-navy text-white">
-      {/* Decorative background */}
+      {/* =====================================================
+          DECORATIVE BACKGROUND
+          ===================================================== */}
+
       <div
         aria-hidden="true"
         className="
@@ -76,7 +83,10 @@ export default function Footer() {
       </div>
 
       <Container className="relative">
-        {/* Main Footer */}
+        {/* ===================================================
+            MAIN FOOTER
+            =================================================== */}
+
         <div
           className="
             grid
@@ -89,35 +99,58 @@ export default function Footer() {
             lg:gap-16
           "
         >
-          {/* Identity */}
+          {/* =================================================
+              IDENTITY
+              ================================================= */}
+
           <div>
             <Link
               href="/"
               aria-label="HMP PGSD - Beranda"
-              className="inline-flex items-center gap-3"
+              className="
+                inline-flex
+                items-center
+                gap-3
+              "
             >
+              {/* LOGO HMP */}
+
               <div
-                aria-hidden="true"
                 className="
+                  relative
                   flex
-                  h-11
-                  w-11
+                  h-14
+                  w-14
+                  shrink-0
                   items-center
                   justify-center
-                  rounded-md
-                  bg-sky-accent
-                  font-heading
-                  text-xs
-                  font-bold
-                  tracking-[-0.03em]
-                  text-deep-navy
+                  overflow-hidden
+                  rounded-xl
+                  bg-white
+                  p-1.5
+                  shadow-[0_10px_30px_rgba(0,0,0,0.15)]
                 "
               >
-                HMP
+                <Image
+                  src="/images/logo_hmp.jpeg"
+                  alt="Logo HMP PGSD FKIP Universitas Muhammadiyah Makassar"
+                  width={56}
+                  height={56}
+                  className="h-full w-full object-contain"
+                />
               </div>
 
+              {/* ORGANIZATION NAME */}
+
               <div>
-                <p className="font-heading text-base font-bold text-white">
+                <p
+                  className="
+                    font-heading
+                    text-base
+                    font-bold
+                    text-white
+                  "
+                >
                   HMP PGSD
                 </p>
 
@@ -136,6 +169,8 @@ export default function Footer() {
               </div>
             </Link>
 
+            {/* FOOTER HEADLINE */}
+
             <h2
               className="
                 mt-9
@@ -153,6 +188,8 @@ export default function Footer() {
               Melanjutkan perjuangan.
             </h2>
 
+            {/* DESCRIPTION */}
+
             <p
               className="
                 mt-6
@@ -167,6 +204,8 @@ export default function Footer() {
               Pendidikan Guru Sekolah Dasar FKIP Universitas Muhammadiyah
               Makassar.
             </p>
+
+            {/* ARCHIVE CTA */}
 
             <Link
               href="/arsip"
@@ -203,7 +242,10 @@ export default function Footer() {
             </Link>
           </div>
 
-          {/* Navigation */}
+          {/* =================================================
+              NAVIGATION
+              ================================================= */}
+
           <div>
             <p
               className="
@@ -220,7 +262,13 @@ export default function Footer() {
 
             <nav
               aria-label="Navigasi footer"
-              className="mt-7 flex flex-col items-start gap-3"
+              className="
+                mt-7
+                flex
+                flex-col
+                items-start
+                gap-3
+              "
             >
               {navigation.map((item) => (
                 <Link
@@ -259,7 +307,10 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Social */}
+          {/* =================================================
+              SOCIAL MEDIA
+              ================================================= */}
+
           <div>
             <p
               className="
@@ -277,6 +328,10 @@ export default function Footer() {
             <div className="mt-7 flex flex-col gap-3">
               {socialMedia.map((item) => {
                 const Icon = item.icon;
+
+                /* ---------------------------------------------
+                   SOCIAL MEDIA YANG BELUM TERSEDIA
+                   --------------------------------------------- */
 
                 if (!item.href) {
                   return (
@@ -312,6 +367,10 @@ export default function Footer() {
                   );
                 }
 
+                /* ---------------------------------------------
+                   SOCIAL MEDIA ACTIVE
+                   --------------------------------------------- */
+
                 return (
                   <a
                     key={item.label}
@@ -337,6 +396,10 @@ export default function Footer() {
               })}
             </div>
 
+            {/* =================================================
+                CAMPUS
+                ================================================= */}
+
             <div className="mt-10">
               <p
                 className="
@@ -351,18 +414,34 @@ export default function Footer() {
                 Kampus
               </p>
 
-              <p className="mt-4 text-sm leading-6 text-white/55">
+              <p
+                className="
+                  mt-4
+                  text-sm
+                  leading-6
+                  text-white/55
+                "
+              >
                 Universitas Muhammadiyah Makassar
               </p>
 
-              <p className="mt-1 text-xs text-white/30">
+              <p
+                className="
+                  mt-1
+                  text-xs
+                  text-white/30
+                "
+              >
                 Detail alamat akan dilengkapi.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Footer */}
+        {/* ===================================================
+            BOTTOM FOOTER
+            =================================================== */}
+
         <div
           className="
             flex
@@ -378,9 +457,46 @@ export default function Footer() {
         >
           <p>© {currentYear} HMP PGSD FKIP Universitas Muhammadiyah Makassar</p>
 
-          <p className="font-heading tracking-[0.04em]">2007 — Present</p>
+          <p
+            className="
+              font-heading
+              tracking-[0.04em]
+            "
+          >
+            2007 — Present
+          </p>
         </div>
       </Container>
     </footer>
   );
+
+  <div
+    className="
+    flex
+    flex-col
+    gap-4
+    py-6
+    text-xs
+    text-white/40
+    sm:flex-row
+    sm:items-center
+    sm:justify-between
+  "
+  >
+    <p>© {currentYear} HMP PGSD FKIP Universitas Muhammadiyah Makassar</p>
+
+    <div className="flex items-center gap-5">
+      <p className="font-heading tracking-[0.04em]">2007 — Present</p>
+
+      <Link
+        href="/admin/login"
+        className="
+        transition-colors
+        hover:text-sky-accent
+      "
+      >
+        Admin
+      </Link>
+    </div>
+  </div>;
 }

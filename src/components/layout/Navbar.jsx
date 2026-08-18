@@ -1,561 +1,745 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { ArrowUpRight, LogIn, Menu, X } from "lucide-react";
 
-import Container from "@/components/ui/Container";
-
-const navigation = [
-  {
-    label: "Selayang Pandang",
-    href: "/selayang-pandang",
-  },
-  {
-    label: "Sejarah",
-    href: "/sejarah",
-  },
-  {
-    label: "Pengurus",
-    href: "/pengurus",
-  },
-  {
-    label: "Program Kerja",
-    href: "/program-kerja",
-  },
-  {
-    label: "Angkatan",
-    href: "/angkatan",
-  },
-  {
-    label: "Galeri",
-    href: "/galeri",
-  },
+const navItems = [
+  { label: "Selayang Pandang", href: "/selayang-pandang" },
+  { label: "Sejarah", href: "/sejarah" },
+  { label: "Pengurus", href: "/pengurus" },
+  { label: "Program Kerja", href: "/program-kerja" },
+  { label: "Angkatan", href: "/angkatan" },
+  { label: "Galeri", href: "/galeri" },
 ];
+
+const navContainer = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.055,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const navItemAnimation = {
+  hidden: {
+    opacity: 0,
+    y: -10,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.45,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
 
 export default function Navbar() {
   const pathname = usePathname();
 
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const isHomePage = pathname === "/";
-
-  // Navbar gelap/transparan hanya saat berada
-  // di bagian paling atas Hero homepage.
-  const isOverHero = isHomePage && !isScrolled && !isMenuOpen;
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 28);
+      setScrolled(window.scrollY > 30);
     };
 
     handleScroll();
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  // Tutup mobile menu ketika route berubah.
   useEffect(() => {
-    setIsMenuOpen(false);
+    setOpen(false);
   }, [pathname]);
 
-  // Lock scroll ketika mobile menu terbuka.
-  useEffect(() => {
-    if (!isMenuOpen) {
-      document.body.style.overflow = "";
-      return;
-    }
-
-    document.body.style.overflow = "hidden";
-
-    const handleEscape = (event) => {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.style.overflow = "";
-
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [isMenuOpen]);
-
-  function isActive(href) {
-    return pathname === href || pathname.startsWith(`${href}/`);
+  // Navbar public tidak tampil di halaman admin/login.
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/login")) {
+    return null;
   }
+
+  const isActive = (href) =>
+    pathname === href || pathname?.startsWith(`${href}/`);
 
   return (
     <>
-      <header
+      <motion.header
+        initial={{
+          y: -100,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.75,
+          ease: [0.22, 1, 0.36, 1],
+        }}
         className={`
-          fixed
-          inset-x-0
-          top-0
-          z-50
+          fixed left-0 right-0 top-0 z-[100]
           border-b
-          transition-all
+          transition-[background-color,border-color,box-shadow]
           duration-500
-          ease-out
-
           ${
-            isOverHero
+            scrolled
               ? `
-                  border-white/10
-                  bg-deep-navy/55
-                  text-white
-                  backdrop-blur-xl
-                `
+                border-white/[0.08]
+                bg-[#071f31]/92
+                shadow-[0_18px_50px_rgba(0,0,0,0.18)]
+                backdrop-blur-2xl
+              `
               : `
-                  border-deep-navy/8
-                  bg-off-white/90
-                  text-deep-navy
-                  shadow-[0_8px_40px_rgba(9,46,71,0.06)]
-                  backdrop-blur-xl
-                `
+                border-white/[0.10]
+                bg-[#092E47]/96
+                backdrop-blur-xl
+              `
           }
         `}
       >
-        <Container>
-          <div
-            className="
-              flex
-              h-[82px]
-              items-center
-              justify-between
-              gap-6
-              md:h-[88px]
-            "
+        {/* TOP LIGHT */}
+        <div
+          className="
+            pointer-events-none
+            absolute inset-x-0 top-0
+            h-px
+            bg-gradient-to-r
+            from-transparent
+            via-[#36BFE7]/70
+            to-transparent
+          "
+        />
+
+        <motion.div
+          animate={{
+            height: scrolled ? 72 : 90,
+          }}
+          transition={{
+            duration: 0.4,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="
+            relative
+            mx-auto
+            flex
+            w-full
+            max-w-[1600px]
+            items-center
+            px-6
+            lg:px-8
+            xl:px-10
+          "
+        >
+          {/* ==================================================
+              BRAND
+          ================================================== */}
+
+          <motion.div
+            initial={{ opacity: 0, x: -25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              duration: 0.65,
+              delay: 0.08,
+              ease: [0.22, 1, 0.36, 1],
+            }}
           >
-            {/* =========================
-                BRAND
-                ========================= */}
             <Link
               href="/"
-              aria-label="HMP PGSD FKIP - Beranda"
-              className="
-                group
-                flex
-                shrink-0
-                items-center
-                gap-3
-              "
+              className="group flex shrink-0 items-center gap-3"
+              aria-label="HMP PGSD - Beranda"
             >
-              <div
-                className={`
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-[13px]
-                  font-heading
-                  text-[11px]
-                  font-extrabold
-                  tracking-[-0.04em]
-                  transition-all
-                  duration-300
-                  group-hover:-translate-y-0.5
-
-                  ${
-                    isOverHero
-                      ? `
-                          bg-white
-                          text-deep-navy
-                          shadow-[0_8px_25px_rgba(0,0,0,0.12)]
-                        `
-                      : `
-                          bg-deep-navy
-                          text-white
-                          shadow-[0_8px_25px_rgba(9,46,71,0.12)]
-                        `
-                  }
-                `}
+              <motion.div
+                whileHover={{
+                  scale: 1.08,
+                  rotate: -3,
+                }}
+                whileTap={{
+                  scale: 0.96,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 350,
+                  damping: 18,
+                }}
+                className="
+                  relative
+                  flex h-[46px] w-[46px]
+                  items-center justify-center
+                  overflow-hidden
+                  rounded-[14px]
+                  bg-white
+                  p-1.5
+                  shadow-[0_8px_30px_rgba(54,191,231,0.13)]
+                "
               >
-                HMP
-              </div>
+                <Image
+                  src="/images/logo_hmp.jpeg"
+                  alt="Logo HMP PGSD"
+                  width={46}
+                  height={46}
+                  priority
+                  className="h-full w-full object-contain"
+                />
 
-              <div className="leading-none">
+                <div
+                  className="
+                    pointer-events-none
+                    absolute inset-0
+                    bg-gradient-to-tr
+                    from-transparent
+                    via-white/0
+                    to-[#36BFE7]/10
+                  "
+                />
+              </motion.div>
+
+              <div className="hidden sm:block">
                 <p
-                  className={`
+                  className="
                     font-heading
                     text-[15px]
-                    font-bold
-                    tracking-[-0.035em]
-                    transition-colors
-
-                    ${isOverHero ? "text-white" : "text-deep-navy"}
-                  `}
+                    font-extrabold
+                    leading-none
+                    tracking-[-0.025em]
+                    text-white
+                  "
                 >
                   HMP PGSD
                 </p>
 
                 <p
-                  className={`
+                  className="
                     mt-1
-                    font-heading
                     text-[8px]
                     font-bold
                     uppercase
-                    tracking-[0.14em]
-                    transition-colors
-
-                    ${isOverHero ? "text-white/45" : "text-slate"}
-                  `}
+                    tracking-[0.18em]
+                    text-[#93dff4]
+                  "
                 >
-                  FKIP Unismuh
+                  FKIP UNISMUH
                 </p>
               </div>
             </Link>
+          </motion.div>
 
-            {/* =========================
-                DESKTOP NAVIGATION
-                ========================= */}
-            <nav
-              aria-label="Navigasi utama"
-              className="
-                hidden
-                items-center
-                gap-1
-                xl:flex
-              "
-            >
-              {navigation.map((item) => {
+          {/* ==================================================
+              DESKTOP NAVIGATION
+          ================================================== */}
+
+          <motion.nav
+            variants={navContainer}
+            initial="hidden"
+            animate="show"
+            className="
+              ml-auto
+              hidden
+              items-center
+              lg:flex
+            "
+          >
+            <div className="flex items-center gap-0.5 xl:gap-1">
+              {navItems.map((item) => {
                 const active = isActive(item.href);
 
                 return (
-                  <Link
+                  <motion.div
                     key={item.href}
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`
-                      relative
-                      rounded-full
-                      px-4
-                      py-2.5
-                      font-heading
-                      text-[12px]
-                      font-semibold
-                      tracking-[-0.01em]
-                      transition-all
-                      duration-300
-
-                      ${
-                        isOverHero
-                          ? active
-                            ? `
-                                bg-white/10
-                                text-sky-accent
-                              `
-                            : `
-                                text-white/65
-                                hover:bg-white/[0.06]
-                                hover:text-white
-                              `
-                          : active
-                            ? `
-                                bg-primary-blue/8
-                                text-primary-blue
-                              `
-                            : `
-                                text-deep-navy/65
-                                hover:bg-deep-navy/[0.04]
-                                hover:text-deep-navy
-                              `
-                      }
-                    `}
+                    variants={navItemAnimation}
+                    className="relative"
                   >
-                    {item.label}
+                    <Link
+                      href={item.href}
+                      className="
+                        group
+                        relative
+                        flex h-11
+                        items-center
+                        justify-center
+                        overflow-hidden
+                        whitespace-nowrap
+                        rounded-full
+                        px-3
+                        xl:px-4
+                      "
+                    >
+                      {/* ACTIVE PILL */}
 
-                    {active && (
+                      {active && (
+                        <motion.span
+                          layoutId="navbar-active-pill"
+                          transition={{
+                            type: "spring",
+                            stiffness: 420,
+                            damping: 32,
+                          }}
+                          className="
+                            absolute inset-0
+                            rounded-full
+                            border
+                            border-[#36BFE7]/30
+                            bg-[#36BFE7]/14
+                            shadow-[inset_0_0_22px_rgba(54,191,231,0.05)]
+                          "
+                        />
+                      )}
+
+                      {/* HOVER GLOW */}
+
                       <span
-                        aria-hidden="true"
-                        className={`
-                          absolute
-                          -bottom-[11px]
-                          left-1/2
-                          h-[2px]
-                          w-5
-                          -translate-x-1/2
+                        className="
+                          absolute inset-0
                           rounded-full
-
-                          ${isOverHero ? "bg-sky-accent" : "bg-primary-blue"}
-                        `}
+                          bg-white/[0.07]
+                          opacity-0
+                          transition-opacity
+                          duration-300
+                          group-hover:opacity-100
+                        "
                       />
-                    )}
-                  </Link>
+
+                      {/* TEXT */}
+
+                      <span
+                        className={`
+                          relative z-10
+                          text-[10px]
+                          font-bold
+                          uppercase
+                          tracking-[0.09em]
+                          transition-colors
+                          duration-300
+                          xl:text-[11px]
+                          ${
+                            active
+                              ? "text-[#71d6f3]"
+                              : "text-white/80 group-hover:text-white"
+                          }
+                        `}
+                      >
+                        {item.label}
+                      </span>
+
+                      {/* HOVER LINE */}
+
+                      {!active && (
+                        <span
+                          className="
+                            absolute bottom-[5px]
+                            left-1/2
+                            h-[2px]
+                            w-0
+                            -translate-x-1/2
+                            rounded-full
+                            bg-[#36BFE7]
+                            transition-all
+                            duration-300
+                            group-hover:w-5
+                          "
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
                 );
               })}
-            </nav>
-
-            {/* =========================
-                ARCHIVE + MOBILE
-                ========================= */}
-            <div className="flex items-center gap-2">
-              <Link
-                href="/arsip"
-                className={`
-                  group
-                  hidden
-                  h-11
-                  items-center
-                  gap-3
-                  rounded-full
-                  border
-                  px-5
-                  font-heading
-                  text-[11px]
-                  font-bold
-                  uppercase
-                  tracking-[0.12em]
-                  transition-all
-                  duration-300
-                  sm:inline-flex
-
-                  ${
-                    isOverHero
-                      ? `
-                          border-white/20
-                          bg-white/[0.05]
-                          text-white
-                          hover:border-white/35
-                          hover:bg-white
-                          hover:text-deep-navy
-                        `
-                      : `
-                          border-deep-navy
-                          bg-deep-navy
-                          text-white
-                          hover:bg-primary-blue
-                          hover:border-primary-blue
-                        `
-                  }
-                `}
-              >
-                Arsip
-                <ArrowUpRight
-                  aria-hidden="true"
-                  size={15}
-                  strokeWidth={1.8}
-                  className="
-                    transition-transform
-                    duration-300
-                    group-hover:-translate-y-0.5
-                    group-hover:translate-x-0.5
-                  "
-                />
-              </Link>
-
-              <button
-                type="button"
-                aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
-                aria-expanded={isMenuOpen}
-                onClick={() => setIsMenuOpen((state) => !state)}
-                className={`
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  transition-all
-                  xl:hidden
-
-                  ${
-                    isOverHero
-                      ? `
-                          border-white/20
-                          text-white
-                          hover:bg-white
-                          hover:text-deep-navy
-                        `
-                      : `
-                          border-deep-navy/15
-                          text-deep-navy
-                          hover:bg-deep-navy
-                          hover:text-white
-                        `
-                  }
-                `}
-              >
-                {isMenuOpen ? (
-                  <X size={20} strokeWidth={1.7} />
-                ) : (
-                  <Menu size={20} strokeWidth={1.7} />
-                )}
-              </button>
             </div>
-          </div>
-        </Container>
-      </header>
 
-      {/* =========================
-          MOBILE MENU
-          ========================= */}
-      <div
-        className={`
-          fixed
-          inset-0
-          z-40
-          bg-off-white
-          transition-all
-          duration-500
-          ease-out
-          xl:hidden
+            {/* DIVIDER */}
 
-          ${
-            isMenuOpen
-              ? `
-                  visible
-                  translate-y-0
-                  opacity-100
-                `
-              : `
-                  invisible
-                  -translate-y-3
-                  opacity-0
-                  pointer-events-none
-                `
-          }
-        `}
-      >
-        <Container
-          className="
-            flex
-            min-h-[100svh]
-            flex-col
-            pb-8
-            pt-32
-          "
-        >
-          <p
-            className="
-              font-heading
-              text-[10px]
-              font-bold
-              uppercase
-              tracking-[0.16em]
-              text-primary-blue
-            "
-          >
-            Navigation / Index
-          </p>
+            <motion.div
+              variants={navItemAnimation}
+              className="
+                mx-3
+                h-7
+                w-px
+                bg-gradient-to-b
+                from-transparent
+                via-white/25
+                to-transparent
+                xl:mx-4
+              "
+            />
 
-          <nav
-            aria-label="Navigasi mobile"
-            className="
-              mt-8
-              border-t
-              border-deep-navy/10
-            "
-          >
-            {navigation.map((item, index) => {
-              const active = isActive(item.href);
+            {/* ARSIP */}
 
-              return (
+            <motion.div variants={navItemAnimation}>
+              <motion.div
+                whileHover={{
+                  y: -2,
+                  scale: 1.025,
+                }}
+                whileTap={{
+                  scale: 0.97,
+                }}
+              >
                 <Link
-                  key={item.href}
-                  href={item.href}
+                  href="/arsip"
                   className="
-                      group
-                      grid
-                      grid-cols-[44px_1fr_auto]
-                      items-center
-                      gap-3
-                      border-b
-                      border-deep-navy/10
-                      py-5
-                    "
+                    group
+                    relative
+                    flex h-11
+                    items-center
+                    justify-center
+                    gap-2
+                    overflow-hidden
+                    rounded-full
+                    border
+                    border-[#6dd8f5]/50
+                    px-5
+                    text-[10px]
+                    font-extrabold
+                    uppercase
+                    tracking-[0.10em]
+                    text-white
+                    transition
+                    duration-300
+                    hover:border-[#6dd8f5]
+                    hover:shadow-[0_0_25px_rgba(54,191,231,0.14)]
+                    xl:text-[11px]
+                  "
                 >
                   <span
                     className="
-                        font-heading
-                        text-[10px]
-                        font-bold
-                        tracking-[0.14em]
-                        text-primary-blue
-                      "
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                      absolute inset-0
+                      translate-y-full
+                      bg-[#36BFE7]/15
+                      transition-transform
+                      duration-300
+                      group-hover:translate-y-0
+                    "
+                  />
 
-                  <span
-                    className={`
-                        font-heading
-                        text-[clamp(1.5rem,7vw,2.5rem)]
-                        font-semibold
-                        leading-none
-                        tracking-[-0.04em]
-                        transition-transform
-                        duration-300
-                        group-hover:translate-x-1
-
-                        ${active ? "text-primary-blue" : "text-deep-navy"}
-                      `}
-                  >
-                    {item.label}
-                  </span>
+                  <span className="relative z-10">Arsip</span>
 
                   <ArrowUpRight
-                    size={18}
-                    strokeWidth={1.6}
+                    size={14}
+                    strokeWidth={2}
                     className="
-                        text-deep-navy/30
-                        transition-all
-                        group-hover:text-primary-blue
-                      "
+                      relative z-10
+                      transition-transform
+                      duration-300
+                      group-hover:-translate-y-0.5
+                      group-hover:translate-x-0.5
+                    "
                   />
                 </Link>
-              );
-            })}
-          </nav>
+              </motion.div>
+            </motion.div>
 
-          <div className="mt-auto pt-10">
-            <Link
-              href="/arsip"
-              className="
-                flex
-                min-h-14
-                w-full
-                items-center
-                justify-between
-                rounded-full
-                bg-deep-navy
-                px-6
-                font-heading
-                text-sm
-                font-semibold
-                text-white
-              "
-            >
-              Buka Arsip Digital
-              <ArrowUpRight size={18} strokeWidth={1.7} />
-            </Link>
+            {/* ADMIN */}
 
-            <p
-              className="
-                mt-6
-                text-xs
-                leading-6
-                text-slate
-              "
-            >
-              HMP PGSD FKIP
-              <br />
-              Universitas Muhammadiyah Makassar
-            </p>
-          </div>
-        </Container>
-      </div>
+            <motion.div variants={navItemAnimation}>
+              <motion.div
+                whileHover={{
+                  y: -2,
+                  scale: 1.025,
+                }}
+                whileTap={{
+                  scale: 0.97,
+                }}
+                className="ml-2"
+              >
+                <Link
+                  href="/admin"
+                  className="
+                    group
+                    relative
+                    flex h-11
+                    items-center
+                    justify-center
+                    gap-2
+                    overflow-hidden
+                    rounded-full
+                    bg-white
+                    px-5
+                    text-[10px]
+                    font-extrabold
+                    uppercase
+                    tracking-[0.10em]
+                    text-[#092E47]
+                    shadow-[0_10px_35px_rgba(0,0,0,0.15)]
+                    transition
+                    duration-300
+                    hover:shadow-[0_10px_35px_rgba(54,191,231,0.15)]
+                    xl:text-[11px]
+                  "
+                >
+                  <span
+                    className="
+                      absolute inset-0
+                      translate-x-[-105%]
+                      skew-x-[-18deg]
+                      bg-gradient-to-r
+                      from-transparent
+                      via-[#36BFE7]/20
+                      to-transparent
+                      transition-transform
+                      duration-700
+                      group-hover:translate-x-[105%]
+                    "
+                  />
+
+                  <LogIn size={14} strokeWidth={2} className="relative z-10" />
+
+                  <span className="relative z-10">Admin</span>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.nav>
+
+          {/* ==================================================
+              MOBILE BUTTON
+          ================================================== */}
+
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setOpen((value) => !value)}
+            aria-label={open ? "Tutup menu" : "Buka menu"}
+            aria-expanded={open}
+            className="
+              ml-auto
+              flex h-11 w-11
+              items-center
+              justify-center
+              rounded-xl
+              border
+              border-white/15
+              bg-white/[0.06]
+              text-white
+              backdrop-blur
+              lg:hidden
+            "
+          >
+            <AnimatePresence mode="wait">
+              {open ? (
+                <motion.div
+                  key="close"
+                  initial={{
+                    opacity: 0,
+                    rotate: -90,
+                    scale: 0.5,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    rotate: 0,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    rotate: 90,
+                    scale: 0.5,
+                  }}
+                >
+                  <X size={23} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{
+                    opacity: 0,
+                    rotate: 90,
+                    scale: 0.5,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    rotate: 0,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    rotate: -90,
+                    scale: 0.5,
+                  }}
+                >
+                  <Menu size={23} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        </motion.div>
+
+        {/* MOVING LIGHT AT BOTTOM */}
+
+        <motion.div
+          initial={{ x: "-30%" }}
+          animate={{ x: "130%" }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            repeatDelay: 3,
+            ease: "easeInOut",
+          }}
+          className="
+            pointer-events-none
+            absolute bottom-0
+            h-px
+            w-[22%]
+            bg-gradient-to-r
+            from-transparent
+            via-[#36BFE7]/80
+            to-transparent
+          "
+        />
+      </motion.header>
+
+      {/* SPACER KARENA NAVBAR FIXED */}
+
+      <motion.div
+        animate={{
+          height: scrolled ? 72 : 90,
+        }}
+        transition={{
+          duration: 0.4,
+        }}
+      />
+
+      {/* ==================================================
+          MOBILE MENU
+      ================================================== */}
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: -20,
+              scaleY: 0.92,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scaleY: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: -15,
+              scaleY: 0.96,
+            }}
+            transition={{
+              duration: 0.35,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            style={{
+              transformOrigin: "top",
+            }}
+            className="
+              fixed
+              left-0 right-0
+              top-[90px]
+              z-[99]
+              border-b
+              border-white/10
+              bg-[#071f31]/98
+              shadow-2xl
+              backdrop-blur-2xl
+              lg:hidden
+            "
+          >
+            <nav className="px-6 py-6">
+              <motion.div
+                variants={navContainer}
+                initial="hidden"
+                animate="show"
+                className="space-y-1"
+              >
+                {navItems.map((item) => {
+                  const active = isActive(item.href);
+
+                  return (
+                    <motion.div key={item.href} variants={navItemAnimation}>
+                      <Link
+                        href={item.href}
+                        className={`
+                          flex min-h-14
+                          items-center
+                          justify-between
+                          rounded-xl
+                          px-4
+                          text-sm
+                          font-semibold
+                          transition
+                          ${
+                            active
+                              ? "bg-[#36BFE7]/12 text-[#6bd4f1]"
+                              : "text-white/75 hover:bg-white/[0.06] hover:text-white"
+                          }
+                        `}
+                      >
+                        {item.label}
+
+                        <ArrowUpRight
+                          size={15}
+                          className={
+                            active ? "text-[#36BFE7]" : "text-white/30"
+                          }
+                        />
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <Link
+                  href="/arsip"
+                  className="
+                    flex h-12
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    border
+                    border-[#36BFE7]/35
+                    text-xs
+                    font-bold
+                    uppercase
+                    tracking-[0.08em]
+                    text-white
+                  "
+                >
+                  Arsip
+                  <ArrowUpRight size={14} />
+                </Link>
+
+                <Link
+                  href="/admin"
+                  className="
+                    flex h-12
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    bg-white
+                    text-xs
+                    font-bold
+                    uppercase
+                    tracking-[0.08em]
+                    text-[#092E47]
+                  "
+                >
+                  <LogIn size={14} />
+                  Admin
+                </Link>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
