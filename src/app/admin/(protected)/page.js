@@ -280,42 +280,6 @@ export default async function AdminPage() {
             md:justify-between
           "
         >
-          <div>
-            <p
-              className="
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-[0.16em]
-                text-primary-blue
-              "
-            >
-              Database Status
-            </p>
-
-            <h2
-              className="
-                mt-2
-                font-heading
-                text-xl
-                font-semibold
-                text-deep-navy
-              "
-            >
-              Supabase terhubung.
-            </h2>
-
-            <p
-              className="
-                mt-2
-                text-sm
-                text-slate
-              "
-            >
-              Dashboard membaca data langsung dari database.
-            </p>
-          </div>
-
           <div
             className="
               inline-flex
