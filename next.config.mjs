@@ -12,7 +12,11 @@ function getLocalIPv4Addresses() {
     if (!networkInterface) continue;
 
     for (const network of networkInterface) {
-      if (network.family === "IPv4" && !network.internal && network.address) {
+      if (
+        network.family === "IPv4" &&
+        !network.internal &&
+        network.address
+      ) {
         addresses.push(network.address);
       }
     }
@@ -29,10 +33,14 @@ const nextConfig = {
      DEVELOPMENT LAN ACCESS
      ======================================================= */
 
-  allowedDevOrigins: ["localhost", "127.0.0.1", ...localIPs],
+  allowedDevOrigins: [
+    "localhost",
+    "127.0.0.1",
+    ...localIPs,
+  ],
 
   /* =======================================================
-     REMOTE IMAGES
+     SUPABASE STORAGE IMAGES
      ======================================================= */
 
   images: {
