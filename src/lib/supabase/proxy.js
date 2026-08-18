@@ -6,52 +6,82 @@ export async function updateSession(request) {
     request,
   });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
+  /*
+   * =========================================================
+   * SUPABASE ENV VALIDATION
+   * =========================================================
+   */
 
-        setAll(cookiesToSet, headers) {
-          /*
-           * Update cookie pada request.
-           */
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value);
-          });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabasePublishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-          /*
-           * Buat response baru dengan request yang sudah diperbarui.
-           */
-          supabaseResponse = NextResponse.next({
-            request,
-          });
+  console.log("[SUPABASE ENV CHECK]", {
+    urlExists: Boolean(supabaseUrl),
+    publishableKeyExists: Boolean(supabasePublishableKey),
+  });
 
-          /*
-           * Kirim cookie baru ke browser.
-           */
-          cookiesToSet.forEach(({ name, value, options }) => {
-            supabaseResponse.cookies.set(name, value, options);
-          });
+  if (!supabaseUrl) {
+    throw new Error("[Supabase Proxy] Missing NEXT_PUBLIC_SUPABASE_URL");
+  }
 
-          /*
-           * Supabase SSR terbaru dapat memberikan
-           * header keamanan/cache saat refresh session.
-           */
-          Object.entries(headers || {}).forEach(([key, value]) => {
-            supabaseResponse.headers.set(key, value);
-          });
-        },
-      },
-    },
-  );
+  if (!supabasePublishableKey) {
+    throw new Error(
+      "[Supabase Proxy] Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+    );
+  }
 
   /*
-   * Verifikasi JWT dan refresh session jika diperlukan.
+   * =========================================================
+   * SUPABASE SERVER CLIENT
+   * =========================================================
    */
+
+  const supabase = createServerClient(supabaseUrl, supabasePublishableKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+
+      setAll(cookiesToSet, headers) {
+        /*
+         * Update cookie pada request.
+         */
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set(name, value);
+        });
+
+        /*
+         * Buat response baru dengan request yang sudah
+         * memiliki cookie terbaru.
+         */
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+
+        /*
+         * Kirim cookie session terbaru ke browser.
+         */
+        cookiesToSet.forEach(({ name, value, options }) => {
+          supabaseResponse.cookies.set(name, value, options);
+        });
+
+        /*
+         * Teruskan header yang diberikan Supabase SSR.
+         */
+        Object.entries(headers || {}).forEach(([key, value]) => {
+          supabaseResponse.headers.set(key, value);
+        });
+      },
+    },
+  });
+
+  /*
+   * =========================================================
+   * SESSION VALIDATION
+   * =========================================================
+   */
+
   await supabase.auth.getClaims();
 
   return supabaseResponse;
